@@ -36,7 +36,7 @@ jobs:
 
     steps:
       - name: Plastic checkout
-        uses: Kaosumaru/plastic-scm-action-action@v1
+        uses: Kaosumaru/plastic-scm-action@v1
         with:
           repository: test@test@test
           branch: /main     
