@@ -1,11 +1,14 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'plastic-scm-action'
+description: 'Action to checkout plastic SCM repo'
+author: 'Mateusz Borycki'
 inputs:
-  milliseconds: # change this
+  repository:
     required: true
-    description: 'input description here'
-    default: 'default value if applicable'
+    description: 'url to the repository'
+  branch:
+    required: false
+    description: 'branch to checkout'
+    default: '/main'
 runs:
   using: 'node16'
   main: 'dist/index.js'

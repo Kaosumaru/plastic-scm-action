@@ -36,16 +36,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(186));
-const wait_1 = __nccwpck_require__(817);
+const plastic_1 = __nccwpck_require__(62);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const ms = core.getInput('milliseconds');
-            core.debug(`Waiting ${ms} milliseconds ...`); // debug is only output if you set the secret `ACTIONS_STEP_DEBUG` to true
-            core.debug(new Date().toTimeString());
-            yield (0, wait_1.wait)(parseInt(ms, 10));
-            core.debug(new Date().toTimeString());
-            core.setOutput('time', new Date().toTimeString());
+            const repository = core.getInput('repository');
+            const branch = core.getInput('branch') || '/main';
+            yield (0, plastic_1.checkoutRepo)(repository, branch);
         }
         catch (error) {
             if (error instanceof Error)
@@ -58,8 +55,8 @@ run();
 
 /***/ }),
 
-/***/ 817:
-/***/ (function(__unused_webpack_module, exports) {
+/***/ 62:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
 
@@ -72,19 +69,61 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.wait = void 0;
-function wait(milliseconds) {
+exports.checkoutRepo = exports.cm = void 0;
+/* eslint-disable no-console */
+const node_fs_1 = __nccwpck_require__(994);
+const util_1 = __importDefault(__nccwpck_require__(669));
+const child_process_1 = __nccwpck_require__(129);
+const execAsync = util_1.default.promisify(child_process_1.exec);
+function cm(params) {
     return __awaiter(this, void 0, void 0, function* () {
-        return new Promise(resolve => {
-            if (isNaN(milliseconds)) {
-                throw new Error('milliseconds not a number');
+        console.log(`> cm ${params}`);
+        try {
+            let exitCode = -1;
+            const command = execAsync(`cm ${params}`);
+            command.child.on('exit', (code) => (exitCode = code));
+            const { stdout, stderr } = yield command;
+            console.log(stdout);
+            console.log(stderr);
+            if (exitCode !== 0) {
+                throw new Error(`cm exited with code ${exitCode}`);
             }
-            setTimeout(() => resolve('done!'), milliseconds);
-        });
+        }
+        catch (error) {
+            console.error(error);
+            throw error;
+        }
     });
 }
-exports.wait = wait;
+exports.cm = cm;
+function workspaceNameForDirectory(directory) {
+    directory = directory.replace('/', '\\');
+    directory = directory.replace(':', '_');
+    return directory;
+}
+function createAnonymousWorkspace() {
+    return __awaiter(this, void 0, void 0, function* () {
+        // check if workspace already exists in this directory
+        // TODO getworkspacefrompath could be used
+        if ((0, node_fs_1.existsSync)('.plastic'))
+            return;
+        const name = workspaceNameForDirectory(process.cwd());
+        yield cm(`workspace create ${name} .`);
+    });
+}
+function checkoutRepo(repository, branch = '/main') {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield createAnonymousWorkspace();
+        yield cm(`switch br:${branch} --repository=${repository}`);
+        // TODO: check if below is actually needed - it seems that the above command does it
+        yield cm(`update`);
+    });
+}
+exports.checkoutRepo = checkoutRepo;
 
 
 /***/ }),
@@ -1651,6 +1690,14 @@ module.exports = require("assert");
 
 /***/ }),
 
+/***/ 129:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("child_process");
+
+/***/ }),
+
 /***/ 614:
 /***/ ((module) => {
 
@@ -1688,6 +1735,14 @@ module.exports = require("https");
 
 "use strict";
 module.exports = require("net");
+
+/***/ }),
+
+/***/ 994:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("node:fs");
 
 /***/ }),
 
