@@ -44,6 +44,4 @@ export async function checkoutRepo(
 ): Promise<void> {
   await createAnonymousWorkspace()
   await cm(`switch br:${branch} --repository=${repository}`)
-  // TODO: check if below is actually needed - it seems that the above command does it
-  await cm(`update`)
 }

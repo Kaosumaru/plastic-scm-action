@@ -119,8 +119,6 @@ function checkoutRepo(repository, branch = '/main') {
     return __awaiter(this, void 0, void 0, function* () {
         yield createAnonymousWorkspace();
         yield cm(`switch br:${branch} --repository=${repository}`);
-        // TODO: check if below is actually needed - it seems that the above command does it
-        yield cm(`update`);
     });
 }
 exports.checkoutRepo = checkoutRepo;
