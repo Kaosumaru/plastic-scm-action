@@ -9,7 +9,7 @@ export async function cm(params: string): Promise<void> {
 
   try {
     let exitCode = -1
-    const command = execAsync(`cm ${params}`)
+    const command = execAsync(`cm ${params}`, {maxBuffer: 10 * 1024 * 1024})
     command.child.on('exit', (code: number) => (exitCode = code))
     const {stdout, stderr} = await command
     console.log(stdout)
