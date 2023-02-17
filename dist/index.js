@@ -84,7 +84,7 @@ function cm(params) {
         console.log(`> cm ${params}`);
         try {
             let exitCode = -1;
-            const command = execAsync(`cm ${params}`);
+            const command = execAsync(`cm ${params}`, { maxBuffer: 10 * 1024 * 1024 });
             command.child.on('exit', (code) => (exitCode = code));
             const { stdout, stderr } = yield command;
             console.log(stdout);
