@@ -1,5 +1,5 @@
 import * as core from '@actions/core'
-import {checkoutRepo} from './plastic'
+import {checkoutRepo, getChangeset} from './plastic'
 
 async function run(): Promise<void> {
   try {
@@ -7,6 +7,7 @@ async function run(): Promise<void> {
     const branch: string = core.getInput('branch') || '/main'
 
     await checkoutRepo(repository, branch)
+    core.setOutput('changeset', getChangeset())
   } catch (error) {
     if (error instanceof Error) core.setFailed(error.message)
   }

@@ -43,6 +43,7 @@ function run() {
             const repository = core.getInput('repository');
             const branch = core.getInput('branch') || '/main';
             yield (0, plastic_1.checkoutRepo)(repository, branch);
+            core.setOutput('changeset', (0, plastic_1.getChangeset)());
         }
         catch (error) {
             if (error instanceof Error)
@@ -73,13 +74,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.checkoutRepo = exports.cm = void 0;
+exports.checkoutRepo = exports.getChangeset = exports.cm = void 0;
 /* eslint-disable no-console */
 const node_fs_1 = __nccwpck_require__(994);
 const util_1 = __importDefault(__nccwpck_require__(669));
 const child_process_1 = __nccwpck_require__(129);
 const execAsync = util_1.default.promisify(child_process_1.exec);
-function cm(params) {
+function cm(params, printOut = true) {
     return __awaiter(this, void 0, void 0, function* () {
         console.log(`> cm ${params}`);
         try {
@@ -87,11 +88,14 @@ function cm(params) {
             const command = execAsync(`cm ${params}`, { maxBuffer: 10 * 1024 * 1024 });
             command.child.on('exit', (code) => (exitCode = code));
             const { stdout, stderr } = yield command;
-            console.log(stdout);
-            console.log(stderr);
+            if (printOut) {
+                console.log(stdout);
+                console.log(stderr);
+            }
             if (exitCode !== 0) {
                 throw new Error(`cm exited with code ${exitCode}`);
             }
+            return stdout;
         }
         catch (error) {
             console.error(error);
@@ -115,6 +119,17 @@ function createAnonymousWorkspace() {
         yield cm(`workspace create ${name} .`);
     });
 }
+function getChangeset() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const status = yield cm(`status`, false);
+        const statusRegex = /\(cs:(\d+) - head\)/g;
+        const matches = statusRegex.exec(status);
+        if (!matches || matches.length < 2)
+            return '';
+        return matches[1];
+    });
+}
+exports.getChangeset = getChangeset;
 function checkoutRepo(repository, branch = '/main') {
     return __awaiter(this, void 0, void 0, function* () {
         yield createAnonymousWorkspace();
