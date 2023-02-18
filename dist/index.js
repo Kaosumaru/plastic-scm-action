@@ -43,7 +43,8 @@ function run() {
             const repository = core.getInput('repository');
             const branch = core.getInput('branch') || '/main';
             yield (0, plastic_1.checkoutRepo)(repository, branch);
-            core.setOutput('changeset', (0, plastic_1.getChangeset)());
+            const changeset = yield (0, plastic_1.getChangeset)();
+            core.setOutput('changeset', changeset);
         }
         catch (error) {
             if (error instanceof Error)

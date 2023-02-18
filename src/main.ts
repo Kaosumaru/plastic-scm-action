@@ -7,7 +7,9 @@ async function run(): Promise<void> {
     const branch: string = core.getInput('branch') || '/main'
 
     await checkoutRepo(repository, branch)
-    core.setOutput('changeset', getChangeset())
+
+    const changeset = await getChangeset()
+    core.setOutput('changeset', changeset)
   } catch (error) {
     if (error instanceof Error) core.setFailed(error.message)
   }
