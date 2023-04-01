@@ -1,8 +1,8 @@
 {
-  "name": "typescript-action",
+  "name": "plastic-scm-action",
   "version": "0.0.0",
   "private": true,
-  "description": "TypeScript template action",
+  "description": "Plastic scm checkout",
   "main": "lib/main.js",
   "scripts": {
     "build": "tsc",
@@ -16,7 +16,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/actions/typescript-action.git"
+    "url": "git+https://github.com/Kaosumaru/plastic-scm-action.git"
   },
   "keywords": [
     "actions",
