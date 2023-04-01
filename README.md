@@ -5,7 +5,7 @@
 
 # plastic-scm-action-action
 Action that checkouts repo from Plastic SCM, suited for local runners.
-WARNING: this action requires sm to be installed on the runner
+WARNING: this action requires cm to be installed on the runner
 
 
 # Inputs
