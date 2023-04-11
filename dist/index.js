@@ -135,7 +135,7 @@ function checkoutRepo(repository, branch = '/main') {
     return __awaiter(this, void 0, void 0, function* () {
         yield createAnonymousWorkspace();
         yield cm(`unco --all`);
-        yield cm(`switch br:${branch} --repository=${repository}`);
+        yield cm(`switch "br:${branch}" --repository=${repository}`);
     });
 }
 exports.checkoutRepo = checkoutRepo;

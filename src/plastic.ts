@@ -57,5 +57,5 @@ export async function checkoutRepo(
 ): Promise<void> {
   await createAnonymousWorkspace()
   await cm(`unco --all`)
-  await cm(`switch br:${branch} --repository=${repository}`)
+  await cm(`switch "br:${branch}" --repository=${repository}`)
 }
